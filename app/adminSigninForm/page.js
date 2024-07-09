@@ -1,15 +1,15 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
 function AdminSigninForm() {
-  const [email, setemail] = useState("");
-  const [password, setpassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
   const router = useRouter();
-  
+
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -19,10 +19,30 @@ function AdminSigninForm() {
       router.push("/adminSigninForm");
     }
   }, [router]);
-  
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = "Email address is invalid";
+    }
+    if (!password) {
+      newErrors.password = "Password is required";
+    } else if (password.length < 0) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+    return newErrors;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
     console.log("Form data:", email, password);
     try {
       const response = await axios.post("http://localhost:4000/adminLogin", {
@@ -32,14 +52,14 @@ function AdminSigninForm() {
       console.log("Login successful:", response.data);
       localStorage.setItem("token", response.data.token);
       router.push("/dashboard");
-
-    
     } catch (error) {
       console.error("Error signing in:", error);
+      setErrors({
+        apiError: "Login failed. Please check your credentials and try again.",
+      });
     }
   };
 
-  
   return (
     <div className="border border-black rounded-lg p-4 mx-auto w-1/2 mt-20 sm:p-12.5 xl:p-17.5">
       <h2 className="mb-9 text-4xl font-bold text-black dark:text-white sm:text-title-xl2">
@@ -55,10 +75,15 @@ function AdminSigninForm() {
             <input
               type="email"
               value={email}
-              onChange={(e) => setemail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
-              className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+              className={`w-full rounded-lg border ${
+                errors.email ? "border-red-500" : "border-stroke"
+              } bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
             />
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email}</p>
+            )}
           </div>
         </div>
 
@@ -70,19 +95,28 @@ function AdminSigninForm() {
             <input
               type="password"
               value={password}
-              onChange={(e) => setpassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+              className={`w-full rounded-lg border ${
+                errors.password ? "border-red-500" : "border-stroke"
+              } bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
             />
+            {errors.password && (
+              <p className="text-red-500 text-sm">{errors.password}</p>
+            )}
           </div>
         </div>
+
+        {errors.apiError && (
+          <p className="text-red-500 text-sm">{errors.apiError}</p>
+        )}
 
         <button className="mt-2 w-full px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">
           SIGN IN
         </button>
       </form>
 
-      <button class="flex w-full mt-4 items-center justify-center gap-3.5 rounded-lg border border-stroke bg-gray p-4 font-medium hover:bg-opacity-80 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-80">
+      <button className="flex w-full mt-4 items-center justify-center gap-3.5 rounded-lg border border-stroke bg-gray p-4 font-medium hover:bg-opacity-80 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-80">
         <span>
           <svg
             width="20"
@@ -91,7 +125,7 @@ function AdminSigninForm() {
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <g clip-path="url(#clip0_191_13499)">
+            <g clipPath="url(#clip0_191_13499)">
               <path
                 d="M19.999 10.2217C20.0111 9.53428 19.9387 8.84788 19.7834 8.17737H10.2031V11.8884H15.8266C15.7201 12.5391 15.4804 13.162 15.1219 13.7195C14.7634 14.2771 14.2935 14.7578 13.7405 15.1328L13.7209 15.2571L16.7502 17.5568L16.96 17.5774C18.8873 15.8329 19.9986 13.2661 19.9986 10.2217"
                 fill="#4285F4"
