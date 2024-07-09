@@ -16,7 +16,7 @@ function AdminSigninForm() {
     if (token) {
       router.push("/dashboard");
     } else {
-      router.push("/adminSigninForm");
+      router.push("/admin/adminSigninForm");
     }
   }, [router]);
 
@@ -155,7 +155,7 @@ function AdminSigninForm() {
 
       <p className="font-medium mt-4 ml-60">
         don't have an account?{" "}
-        <Link href="/adminSignupForm" className="text-primary">
+        <Link href="/admin/adminSignupForm" className="text-primary">
           Sign up
         </Link>
       </p>

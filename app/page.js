@@ -1,6 +1,6 @@
 import React from 'react'
 // import Dashboard from '../app/dashboard/page'
-import AdminSignupForm from './adminSignupForm/page'
+import AdminSignupForm from './admin/adminSignupForm/page'
 function page() {
   return (
 <>

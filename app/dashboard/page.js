@@ -10,13 +10,13 @@ function Dashbaord() {
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) {
-          router.push("/adminSigninForm"); // Redirect to sign-in if token is not present
+          router.push("/admin/adminSigninForm"); // Redirect to sign-in if token is not present
         }
       }, [router]);
 
       const Logout=()=>{
         localStorage.clear();
-        router.push('/adminSigninForm');
+        router.push('/admin/adminSigninForm');
       }
     
   return (

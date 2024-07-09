@@ -223,7 +223,10 @@ function AdminSignupForm() {
 
       <p className="text-center text-md font-medium mt-4">
         Already have an account?{" "}
-        <Link href="/adminSigninForm" className="text-primary hover:underline">
+        <Link
+          href="/admin/adminSigninForm"
+          className="text-primary hover:underline"
+        >
           Sign In
         </Link>
       </p>
